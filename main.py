@@ -1,5 +1,5 @@
 """
-PhotoVault — AI-Powered Photo Search
+PhotoVault - AI-Powered Photo Search
 
 A Flask application that:
   1. Accepts photo uploads via a web interface
@@ -15,6 +15,8 @@ from datetime import datetime
 
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify
+from werkzeug.utils import secure_filename
+import traceback
 
 from google.cloud import storage as gcs
 from google.cloud import vision
@@ -98,12 +100,11 @@ def upload_photo():
         return jsonify({"error": "File type not allowed. Use JPG, PNG, or WebP."}), 400
 
     try:
-        from werkzeug.utils import secure_filename
         
         # cloud storage upload
         original_name = secure_filename(file.filename)
         if not original_name or "." not in original_name:
-            original_name = f"upload.png" # Safe fallback
+            original_name = f"upload.png"
             
         ext = original_name.rsplit(".", 1)[1].lower()
         blob_name = f"photos/{uuid.uuid4().hex}.{ext}"
@@ -140,8 +141,9 @@ def upload_photo():
         return jsonify({"success": True, "photo": doc_data}), 201
 
     except Exception as e:
-        app.logger.error(f"Upload failed: {e}")
-        return jsonify({"error": str(e)}), 500
+        error_msg = traceback.format_exc()
+        app.logger.error(f"Upload failed: {error_msg}")
+        return jsonify({"error": error_msg}), 500
 
 
 @app.route("/api/photos", methods=["GET"])
