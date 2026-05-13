@@ -98,8 +98,13 @@ def upload_photo():
         return jsonify({"error": "File type not allowed. Use JPG, PNG, or WebP."}), 400
 
     try:
+        from werkzeug.utils import secure_filename
+        
         # cloud storage upload
-        original_name = file.filename
+        original_name = secure_filename(file.filename)
+        if not original_name or "." not in original_name:
+            original_name = f"upload.png" # Safe fallback
+            
         ext = original_name.rsplit(".", 1)[1].lower()
         blob_name = f"photos/{uuid.uuid4().hex}.{ext}"
 
