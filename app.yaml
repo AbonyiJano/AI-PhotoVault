@@ -1,0 +1,15 @@
+runtime: python311
+entrypoint: gunicorn -b :$PORT --timeout 120 main:app
+
+instance_class: F2
+
+env_variables:
+  GCP_PROJECT_ID: "your-gcp-project-id"
+  GCS_BUCKET_NAME: "your-project-id-photovault"
+
+handlers:
+  - url: /static
+    static_dir: static
+
+  - url: /.*
+    script: auto

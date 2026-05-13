@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhotoVault — AI-Powered Photo Search</title>
+  <meta name="description" content="Upload photos and search them by content using Google Cloud Vision AI. Find any photo by what's in it." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header id="app-header">
+    <div class="header-inner">
+      <div class="logo" id="logo">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="8" fill="url(#logo-grad)" />
+          <path d="M8 22L13 14L17 19L20 15L24 22H8Z" fill="white" opacity="0.9"/>
+          <circle cx="21" cy="12" r="3" fill="white" opacity="0.9"/>
+          <defs>
+            <linearGradient id="logo-grad" x1="0" y1="0" x2="32" y2="32">
+              <stop stop-color="#6366f1"/>
+              <stop offset="1" stop-color="#a855f7"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span>PhotoVault</span>
+      </div>
+      <nav id="main-nav">
+        <button class="nav-btn active" data-view="gallery" id="nav-gallery">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Gallery
+        </button>
+        <button class="nav-btn" data-view="upload" id="nav-upload">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== HERO / SEARCH ===== -->
+  <section id="hero-section">
+    <div class="hero-content">
+      <h1 id="hero-title">Find any photo by <span class="gradient-text">what's in it</span></h1>
+      <p class="hero-subtitle">AI-powered photo tagging with Google Cloud Vision. Upload your photos and search by content — dogs, receipts, mountains, anything.</p>
+      <div class="search-container" id="search-container">
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="search-input" placeholder='Search photos... try "dog", "mountain", or "car"' autocomplete="off" />
+        <button id="search-clear" class="search-clear hidden" title="Clear search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div id="label-chips" class="label-chips"></div>
+    </div>
+  </section>
+
+  <!-- ===== GALLERY VIEW ===== -->
+  <main id="gallery-view" class="view active">
+    <div id="gallery-status" class="gallery-status"></div>
+    <div id="photo-grid" class="photo-grid"></div>
+    <div id="empty-state" class="empty-state hidden">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <h3>No photos yet</h3>
+      <p>Upload your first photo to get started!</p>
+      <button class="btn-primary" id="empty-upload-btn">Upload Photos</button>
+    </div>
+    <div id="no-results" class="empty-state hidden">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+      <h3>No matches found</h3>
+      <p id="no-results-text">Try a different search term</p>
+    </div>
+  </main>
+
+  <!-- ===== UPLOAD VIEW ===== -->
+  <section id="upload-view" class="view">
+    <div class="upload-container">
+      <div class="dropzone" id="dropzone">
+        <div class="dropzone-content">
+          <div class="dropzone-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <h2>Drop your photos here</h2>
+          <p>or click to browse files</p>
+          <p class="dropzone-hint">Supports JPG, PNG, WebP — max 10 MB per file</p>
+        </div>
+        <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" multiple hidden />
+      </div>
+      <div id="upload-queue" class="upload-queue"></div>
+    </div>
+  </section>
+
+  <!-- ===== LIGHTBOX ===== -->
+  <div id="lightbox" class="lightbox hidden">
+    <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="lightbox-close" title="Close">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <img id="lightbox-img" src="" alt="" />
+      <div class="lightbox-info">
+        <h3 id="lightbox-filename"></h3>
+        <div id="lightbox-labels" class="lightbox-labels"></div>
+        <button class="btn-delete" id="lightbox-delete" title="Delete photo">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOAST ===== -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
